@@ -134,7 +134,8 @@ class ProteinModel:
 
             callbacks.append(ModelCheckpoint(
                 os.path.join(checkpoint_dir, 'all-{epoch}.h5'.format(
-                    epoch='{epoch}'))))
+                    epoch='{epoch}')),
+                save_weights_only=True))
 
         return self.model.fit_generator(generator=self.training_generator,
                                         validation_data=self.validation_generator,
