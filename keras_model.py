@@ -14,7 +14,8 @@ from keras.optimizers import Adadelta
 from keras.layers import GlobalAveragePooling2D
 from keras.applications.mobilenet import MobileNet
 from keras.callbacks import ModelCheckpoint
-
+import tensorflow as tf
+import keras.backend as K
 
 class ProteinDataGenerator(keras.utils.Sequence):
 
@@ -86,6 +87,21 @@ class ProteinDataGenerator(keras.utils.Sequence):
         return im
 
 
+def task_f1(y_true, y_pred):
+    y_pred = K.round(y_pred)
+    tp = K.sum(K.cast(y_true*y_pred, 'float'), axis=0)
+    tn = K.sum(K.cast((1-y_true)*(1-y_pred), 'float'), axis=0)
+    fp = K.sum(K.cast((1-y_true)*y_pred, 'float'), axis=0)
+    fn = K.sum(K.cast(y_true*(1-y_pred), 'float'), axis=0)
+
+    p = tp / (tp + fp + K.epsilon())
+    r = tp / (tp + fn + K.epsilon())
+
+    f1 = 2*p*r / (p+r+K.epsilon())
+    f1 = tf.where(tf.is_nan(f1), tf.zeros_like(f1), f1)
+    return K.mean(f1)
+
+
 class ProteinModel:
 
     def __init__(self, num_classes=28, shape=(512, 512, 3)):
@@ -119,7 +135,7 @@ class ProteinModel:
     def compile_model(self):
         self.model.compile(loss=keras.losses.binary_crossentropy,
                            optimizer=keras.optimizers.Adadelta(),
-                           metrics=['accuracy'])
+                           metrics=['accuracy', task_f1])
 
     def set_generators(self, train_generator, validation_generator):
         self.training_generator = train_generator
