@@ -13,6 +13,7 @@ from keras.losses import binary_crossentropy
 from keras.optimizers import Adadelta
 from keras.layers import GlobalAveragePooling2D
 from keras.applications.mobilenet import MobileNet
+from keras.applications.inception_v3 import InceptionV3
 from keras.callbacks import ModelCheckpoint
 import tensorflow as tf
 import keras.backend as K
@@ -75,13 +76,13 @@ class ProteinDataGenerator(keras.utils.Sequence):
         R = Image.open(path + '_red.png')
         G = Image.open(path + '_green.png')
         B = Image.open(path + '_blue.png')
-        # Y = Image.open(path + '_yellow.png')
+        Y = Image.open(path + '_yellow.png')
 
         im = np.stack((
             np.array(R),
             np.array(G),
-            np.array(B)), -1)  # without yellow channel
-        # np.array(Y)), -1)
+            np.array(B),
+            np.array(Y)), -1)
 
         im = np.divide(im, 255)
         return im
@@ -113,7 +114,7 @@ class ProteinModel:
     def build_model(self):
         input_img = Input(shape=self.input_shape)
 
-        base_model = MobileNet(include_top=False,
+        base_model = InceptionV3(include_top=False,
                                input_shape=self.input_shape,
                                classes=self.num_classes,
                                weights=None)
