@@ -110,6 +110,7 @@ class ProteinModel:
         self.img_rows = shape[0]
         self.img_cols = shape[1]
         self.input_shape = (self.img_rows, self.img_cols, shape[2])
+        self.last_epohs=0
 
     def build_model(self):
         input_img = Input(shape=self.input_shape)
@@ -159,7 +160,8 @@ class ProteinModel:
                                         use_multiprocessing=True,
                                         workers=8,
                                         callbacks=callbacks,
-                                        epochs=epochs)
+                                        epochs=epochs,
+                                        initial_epoch=self.last_epohs)
 
     def score(self):
         return self.model.evaluate_generator(
@@ -173,3 +175,8 @@ class ProteinModel:
 
     def get_summary(self):
         return self.model.summary()
+
+    def load_weights(self, weights_tuple=None):
+        if weights_tuple is not None:
+            self.model.load_weights(weights_tuple[0])
+            self.last_epohs = weights_tuple[1]

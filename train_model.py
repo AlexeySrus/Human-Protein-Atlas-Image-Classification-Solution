@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm_notebook
 import argparse
 import os
+import re
 from keras.models import Model
 from keras.layers import Dense, Dropout, Flatten, Input
 from keras.layers import Conv2D, MaxPooling2D
@@ -18,6 +19,36 @@ from keras.applications.mobilenet import MobileNet
 from config import BATCH_SIZE, SHAPE, SHAFFLE_FLAG, USE_CACHE_FLAG
 from dataset_processing import get_splited_dataset
 from keras_model import ProteinDataGenerator, ProteinModel
+
+
+def get_last_epoch_weights_path(checkpoints_dir):
+    if not os.path.isdir(checkpoints_dir):
+        os.makedirs(checkpoints_dir)
+        return None
+
+    weights_files_list = [
+        matching_f.group()
+        for matching_f in map(
+            lambda x: re.match('all-\d+.h5', x),
+            os.listdir(checkpoints_dir)
+        ) if matching_f if not None
+    ]
+
+    if len(weights_files_list) == 0:
+        return None
+
+    weights_files_list.sort(key=lambda x: -int(x.split('-')[1].split('.')[0]))
+
+
+    print('LOAD MODEL PATH: {}'.format(
+        os.path.join(checkpoints_dir, weights_files_list[0])
+    ))
+
+    return os.path.join(checkpoints_dir,
+                        weights_files_list[0]
+                        ), int(
+        weights_files_list[0].split('-')[1].split('.')[0]
+    )
 
 
 def parse_arguments():
@@ -49,6 +80,7 @@ if __name__ == '__main__':
     model = ProteinModel(shape=SHAPE)
     model.build_model()
     model.compile_model()
+    model.load_weights(get_last_epoch_weights_path(args.checkpoints))
     model.set_generators(train_generator, val_generator)
     model.get_summary()
 
