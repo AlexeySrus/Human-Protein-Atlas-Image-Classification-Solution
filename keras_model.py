@@ -18,6 +18,23 @@ from keras.callbacks import ModelCheckpoint
 import tensorflow as tf
 import keras.backend as K
 
+
+def load_image(path):
+    R = Image.open(path + '_red.png')
+    G = Image.open(path + '_green.png')
+    B = Image.open(path + '_blue.png')
+    Y = Image.open(path + '_yellow.png')
+
+    im = np.stack((
+        np.array(R),
+        np.array(G),
+        np.array(B),
+        np.array(Y)), -1)
+
+    im = np.divide(im, 255)
+    return im
+
+
 class ProteinDataGenerator(keras.utils.Sequence):
 
     def __init__(self, paths, labels, batch_size, shape, shuffle=False,
@@ -73,19 +90,7 @@ class ProteinDataGenerator(keras.utils.Sequence):
             yield item
 
     def __load_image(self, path):
-        R = Image.open(path + '_red.png')
-        G = Image.open(path + '_green.png')
-        B = Image.open(path + '_blue.png')
-        Y = Image.open(path + '_yellow.png')
-
-        im = np.stack((
-            np.array(R),
-            np.array(G),
-            np.array(B),
-            np.array(Y)), -1)
-
-        im = np.divide(im, 255)
-        return im
+        return load_image(path)
 
 
 def task_f1(y_true, y_pred):
