@@ -53,9 +53,9 @@ def get_last_epoch_weights_path(checkpoints_dir):
 
 def parse_arguments():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--train_dataset_table',
+    arg_parser.add_argument('--train-table',
                             help='Path to csv file with train dataset.')
-    arg_parser.add_argument('--train_dataset_folder',
+    arg_parser.add_argument('--train-folder',
                             help='Path to folder with train images.')
     arg_parser.add_argument('--epochs', default=5, type=int,
                             help='Number of epochs.')
@@ -66,8 +66,8 @@ def parse_arguments():
 if __name__ == '__main__':
     args = parse_arguments()
 
-    train_dataset, val_dataset = get_splited_dataset(args.train_dataset_folder,
-                                                     args.train_dataset_table)
+    train_dataset, val_dataset = get_splited_dataset(args.train_folder,
+                                                     args.train_table)
 
     train_generator = ProteinDataGenerator(train_dataset[0], train_dataset[1],
                                            BATCH_SIZE, SHAPE, SHAFFLE_FLAG,

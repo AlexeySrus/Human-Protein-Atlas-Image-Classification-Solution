@@ -141,7 +141,7 @@ class ProteinModel:
 
     def compile_model(self):
         self.model.compile(loss=keras.losses.binary_crossentropy,
-                           optimizer=keras.optimizers.Adadelta(),
+                           optimizer='adam',
                            metrics=['accuracy', task_f1])
 
     def set_generators(self, train_generator, validation_generator):
