@@ -22,6 +22,14 @@ from keras_model import ProteinDataGenerator, ProteinModel
 
 
 def get_last_epoch_weights_path(checkpoints_dir):
+    """
+    Get last epochs weights from target folder
+    Args:
+        checkpoints_dir: target folder
+
+    Returns:
+        (Path to current weights file, current epoch number)
+    """
     if not os.path.isdir(checkpoints_dir):
         os.makedirs(checkpoints_dir)
         return None

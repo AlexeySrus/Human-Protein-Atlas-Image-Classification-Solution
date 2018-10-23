@@ -20,6 +20,14 @@ import keras.backend as K
 
 
 def load_image(path):
+    """
+    Load image from path
+    Args:
+        path: image path
+
+    Returns:
+        image in (0, 1) range
+    """
     R = Image.open(path + '_red.png')
     G = Image.open(path + '_green.png')
     B = Image.open(path + '_blue.png')
@@ -36,7 +44,7 @@ def load_image(path):
 
 
 class ProteinDataGenerator(keras.utils.Sequence):
-
+    """ Standart data generator for keras model """
     def __init__(self, paths, labels, batch_size, shape, shuffle=False,
                  use_cache=False):
         self.paths, self.labels = paths, labels
@@ -94,6 +102,15 @@ class ProteinDataGenerator(keras.utils.Sequence):
 
 
 def task_f1(y_true, y_pred):
+    """
+    Tesor metric function
+    Args:
+        y_true: true value
+        y_pred: predicted value
+
+    Returns:
+        Mean F1-measure
+    """
     y_pred = K.round(y_pred)
     tp = K.sum(K.cast(y_true*y_pred, 'float'), axis=0)
     tn = K.sum(K.cast((1-y_true)*(1-y_pred), 'float'), axis=0)
@@ -109,7 +126,7 @@ def task_f1(y_true, y_pred):
 
 
 class ProteinModel:
-
+    """ Model class """
     def __init__(self, num_classes=28, shape=(512, 512, 3)):
         self.num_classes = num_classes
         self.img_rows = shape[0]
@@ -117,10 +134,17 @@ class ProteinModel:
         self.input_shape = (self.img_rows, self.img_cols, shape[2])
         self.last_epohs=0
 
-    def build_model(self):
+    def build_model(self, _bmodel=InceptionV3):
+        """
+        Method for model building
+        Args:
+            _bmodel: Base feature extractor model
+
+        Returns:
+        """
         input_img = Input(shape=self.input_shape)
 
-        base_model = InceptionV3(include_top=False,
+        base_model = _bmodel(include_top=False,
                                input_shape=self.input_shape,
                                classes=self.num_classes,
                                weights=None)
@@ -139,9 +163,9 @@ class ProteinModel:
                            top_model(base_model(input_img)),
                            'ProteinModel')
 
-    def compile_model(self):
+    def compile_model(self, optimizer='adam'):
         self.model.compile(loss=keras.losses.binary_crossentropy,
-                           optimizer='adam',
+                           optimizer=optimizer,
                            metrics=['accuracy', task_f1])
 
     def set_generators(self, train_generator, validation_generator):
@@ -174,8 +198,8 @@ class ProteinModel:
             use_multiprocessing=True,
             workers=8)
 
-    def predict(self):
-        return self.model.predict_generator(generator=self.validation_generator,
+    def predict(self, data_generator):
+        return self.model.predict_generator(generator=data_generator,
                                             use_multiprocessing=True)
 
     def get_summary(self):

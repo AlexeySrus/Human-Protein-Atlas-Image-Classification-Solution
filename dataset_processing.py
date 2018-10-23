@@ -9,6 +9,16 @@ import os
 
 
 def split_dataset(dataset, val_split, test_split):
+    """
+    Dataset split function
+    Args:
+        dataset: original dataset
+        val_split: validation rate from dataset (mast in range [0, 1])
+        test_split: test rate from dataset (mast in range [0, 1])
+
+    Returns:
+        train, validation, test datasets
+    """
     val_dataset = dataset.sample(frac=val_split, replace=False)
 
     k = 1 - len(val_dataset) / len(dataset)
@@ -27,6 +37,15 @@ def split_dataset(dataset, val_split, test_split):
 
 
 def get_dataset_by_csv(path_to_train_folder, train_csv):
+    """
+    Extract data from csv table
+    Args:
+        path_to_train_folder: path to folder with train data
+        train_csv: path to train csv table
+
+    Returns:
+        (Full paths to data, data labels)
+    """
     path_to_train = path_to_train_folder
     data = train_csv
 
@@ -45,6 +64,16 @@ def get_dataset_by_csv(path_to_train_folder, train_csv):
 
 def get_splited_dataset(path_to_train_folder, path_to_train_csv,
                         val_split_rate=0.25):
+    """
+    Get splitted and extracted dataset
+    Args:
+        path_to_train_folder:
+        path_to_train_csv:
+        val_split_rate:
+
+    Returns:
+        (train dataset, validation dataset)
+    """
     train_data = pd.read_csv(path_to_train_csv)
     train_dataset, val_dataset, test_dataset = split_dataset(train_data,
                                                              val_split_rate, 0)
