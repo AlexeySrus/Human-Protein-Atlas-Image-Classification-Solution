@@ -187,7 +187,7 @@ class ProteinModel:
                            'ProteinModel')
 
     def compile_model(self, optimizer='adam'):
-        self.model.compile(loss=task_f1_loss,#keras.losses.binary_crossentropy,
+        self.model.compile(loss=keras.losses.binary_crossentropy,
                            optimizer=optimizer,
                            metrics=['accuracy', task_f1])
 

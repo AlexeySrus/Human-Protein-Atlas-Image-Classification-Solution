@@ -9,6 +9,11 @@ import argparse
 import os
 import re
 
+from keras.applications.mobilenet import MobileNet
+from keras.applications.xception import Xception
+from keras.applications.inception_v3 import InceptionV3
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
+
 from config import BATCH_SIZE, SHAPE, SHAFFLE_FLAG, USE_CACHE_FLAG
 from dataset_processing import get_splited_dataset
 from keras_model import ProteinDataGenerator, ProteinModel, load_image
@@ -31,7 +36,7 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     model = ProteinModel(shape=SHAPE)
-    model.build_model()
+    model.build_model(InceptionV3)
     model.compile_model()
     model.load_weights((args.model_path, 0))
     model.get_summary()
@@ -43,7 +48,7 @@ if __name__ == '__main__':
         path = os.path.join(args.test_folder, name)
         image = load_image(path)
         score_predict = model.model.predict(image[np.newaxis])[0]
-        label_predict = np.arange(28)[score_predict >= 0.5]
+        label_predict = np.arange(28)[score_predict >= 0.2]
         str_predict_label = ' '.join(str(l) for l in label_predict)
         predicted.append(str_predict_label)
 

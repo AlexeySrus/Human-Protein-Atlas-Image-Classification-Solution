@@ -15,6 +15,7 @@ from keras.losses import binary_crossentropy
 from keras.optimizers import Adadelta
 from keras.layers import GlobalAveragePooling2D
 from keras.applications.mobilenet import MobileNet
+from keras.applications.xception import Xception
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 
@@ -88,7 +89,7 @@ if __name__ == '__main__':
                                          USE_CACHE_FLAG)
 
     model = ProteinModel(shape=SHAPE)
-    model.build_model(InceptionResNetV2)
+    model.build_model(InceptionV3)
     model.compile_model()
     model.load_weights(get_last_epoch_weights_path(args.checkpoints))
     model.set_generators(train_generator, val_generator)
