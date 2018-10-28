@@ -89,7 +89,7 @@ if __name__ == '__main__':
                                          USE_CACHE_FLAG)
 
     model = ProteinModel(shape=SHAPE)
-    model.build_model(InceptionV3)
+    model.build_model(Xception)
     model.compile_model()
     model.load_weights(get_last_epoch_weights_path(args.checkpoints))
     model.set_generators(train_generator, val_generator)

@@ -195,6 +195,7 @@ class ProteinModel:
         self.training_generator = train_generator
         self.validation_generator = validation_generator
 
+
     def learn(self, epochs=1, checkpoint_dir=None):
         callbacks = []
 
