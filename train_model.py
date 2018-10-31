@@ -19,7 +19,7 @@ from keras.applications.xception import Xception
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 
-from config import BATCH_SIZE, SHAPE, SHAFFLE_FLAG, USE_CACHE_FLAG
+from config import BATCH_SIZE, SHAPE, SHAFFLE_FLAG, USE_CACHE_FLAG, BASE_MODEL
 from dataset_processing import get_splited_dataset
 from keras_model import ProteinDataGenerator, ProteinModel
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                                          USE_CACHE_FLAG)
 
     model = ProteinModel(shape=SHAPE)
-    model.build_model(Xception)
+    model.build_model(BASE_MODEL)
     model.compile_model()
     model.load_weights(get_last_epoch_weights_path(args.checkpoints))
     model.set_generators(train_generator, val_generator)

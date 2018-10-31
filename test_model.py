@@ -16,7 +16,7 @@ from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 
 from config import (BATCH_SIZE, SHAPE,
-                    SHAFFLE_FLAG, USE_CACHE_FLAG, TRESHOLDS_PATH)
+                    SHAFFLE_FLAG, USE_CACHE_FLAG, TRESHOLDS_PATH, BASE_MODEL)
 from dataset_processing import get_splited_dataset
 from keras_model import ProteinDataGenerator, ProteinModel, load_image
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     model = ProteinModel(shape=SHAPE)
-    model.build_model(InceptionV3)
+    model.build_model(BASE_MODEL)
     model.compile_model()
     model.load_weights((args.model_path, 0))
     model.get_summary()
