@@ -18,7 +18,7 @@ def predict_vector_with_labels(model, dataset_from_csv):
 
     results = []
     for path in tqdm(paths):
-        results.append(list(model.model.predict(load_image(path)))[0])
+        results.append(list(model.model.predict(load_image(path)[np.newaxis]))[0])
 
     assert len(results) == len(labels)
 
